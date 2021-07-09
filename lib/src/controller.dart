@@ -50,6 +50,8 @@ class MapboxMapController extends ChangeNotifier {
     this.onCameraTrackingDismissed,
     this.onCameraTrackingChanged,
     this.onMapIdle,
+    this.onCameraMove,
+    this.onMapIdle,
     this.onUserLocationUpdated,
     this.onCameraIdle,
   }) : _mapboxGlPlatform = mapboxGlPlatform {
@@ -98,11 +100,17 @@ class MapboxMapController extends ChangeNotifier {
 
     _mapboxGlPlatform.onCameraMoveStartedPlatform.add((_) {
       _isCameraMoving = true;
+      if(onCameraMoveStarted!=null){
+        onCameraMoveStarted!();
+      }
       notifyListeners();
     });
 
     _mapboxGlPlatform.onCameraMovePlatform.add((cameraPosition) {
       _cameraPosition = cameraPosition;
+      if(onCameraMove!=null){
+        onCameraMove!(cameraPosition);
+      }
       notifyListeners();
     });
 
@@ -173,9 +181,13 @@ class MapboxMapController extends ChangeNotifier {
   final OnCameraTrackingDismissedCallback? onCameraTrackingDismissed;
   final OnCameraTrackingChangedCallback? onCameraTrackingChanged;
 
+
   final OnCameraIdleCallback? onCameraIdle;
 
   final OnMapIdleCallback? onMapIdle;
+
+  Function? onCameraMove;
+  Function? onCameraMoveStarted;
 
   /// Callbacks to receive tap events for symbols placed on this map.
   final ArgumentCallbacks<Symbol> onSymbolTapped = ArgumentCallbacks<Symbol>();
